@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_cors import CORS
-from src.pipeline.prediction_pipeline import CustomData, PredictPipeline
 import os
 import logging
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+CORS(app)
+
+logger = logging.getLogger(__name__)
 
 @app.route("/", methods=["GET"])
 def index():
