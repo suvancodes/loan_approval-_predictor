@@ -1,14 +1,21 @@
 import os
 import logging
 from datetime import datetime
-LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
-log_path = os.path.join(os.getcwd(),"logs",LOG_FILE)
-os.makedirs(log_path,exist_ok=True)
-LOG_FILE_PATH = os.path.join(log_path,LOG_FILE)
 
+# On Vercel, use /tmp (writable) instead of ./logs (read-only)
+log_dir = "/tmp/logs" if os.environ.get("VERCEL") else "logs"
+
+# Only try to create logs directory if not on Vercel
+if not os.environ.get("VERCEL"):
+    os.makedirs(log_dir, exist_ok=True)
+
+log_file = os.path.join(log_dir, f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log")
+
+# Create a logger
 logging.basicConfig(
-    filename=LOG_FILE_PATH,
-    format="[%(asctime)s] %(lineno)d %(name)s - %(levelname)s - %(message)s",
+    filename=log_file,
     level=logging.INFO,
-
+    format="[%(asctime)s] %(lineno)d %(name)s - %(levelname)s - %(message)s"
 )
+
+logger = logging.getLogger(__name__)
