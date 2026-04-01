@@ -40,7 +40,9 @@ def predict():
         pipeline = PredictPipeline()
         prediction = pipeline.predict(pred_df)
         
-        result = prediction[0] if hasattr(prediction, "__len__") else prediction
+        # Convert prediction to simple 0 or 1
+        result = int(prediction[0]) if hasattr(prediction, "__len__") else int(prediction)
+        
         return redirect(url_for("result", prediction=result))
     
     except Exception as e:
@@ -49,7 +51,7 @@ def predict():
 
 @app.route("/result", methods=["GET"])
 def result():
-    prediction = request.args.get("prediction", "No prediction")
+    prediction = request.args.get("prediction", "0")
     return render_template("result.html", prediction=prediction)
 
 @app.route("/health", methods=["GET"])
