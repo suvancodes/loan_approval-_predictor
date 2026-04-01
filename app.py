@@ -1,12 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_cors import CORS
 import os
 import logging
+
+from src.pipeline.prediction_pipeline import PredictPipeline, CustomData
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 CORS(app)
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.route("/", methods=["GET"])
@@ -19,47 +22,43 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    payload = request.get_json(silent=True) if request.is_json else request.form.to_dict()
-
-    data = CustomData(
-        Gender=int(float(payload.get("Gender", 0))),
-        Married=int(float(payload.get("Married", 0))),
-        Education=int(float(payload.get("Education", 0))),
-        Self_Employed=int(float(payload.get("Self_Employed", 0))),
-        ApplicantIncome=float(payload.get("ApplicantIncome", 0)),
-        CoapplicantIncome=float(payload.get("CoapplicantIncome", 0)),
-        LoanAmount=float(payload.get("LoanAmount", 0)),
-        Loan_Amount_Term=float(payload.get("Loan_Amount_Term", 0)),
-        Credit_History=float(payload.get("Credit_History", 0)),
-    )
-
-    df = data.get_data_as_dataframe()
-    pipeline = PredictPipeline()
-    pred = int(pipeline.predict(df)[0])
-    label = "Approved" if pred == 1 else "Rejected"
-
-    if request.is_json:
-        return jsonify({"success": True, "result": {"label": label, "prediction": pred}})
-
-    # form submit -> save only label for /result page
-    session["last_result"] = label
-    return redirect(url_for("result"))
+    try:
+        # Extract form data
+        data = CustomData(
+            loan_id=request.form.get("loan_id"),
+            gender=request.form.get("gender"),
+            married=request.form.get("married"),
+            dependents=request.form.get("dependents"),
+            education=request.form.get("education"),
+            self_employed=request.form.get("self_employed"),
+            applicantincome=float(request.form.get("applicantincome", 0)),
+            coapplicantincome=float(request.form.get("coapplicantincome", 0)),
+            loanamount=float(request.form.get("loanamount", 0)),
+            loan_amount_term=float(request.form.get("loan_amount_term", 0)),
+            credit_history=float(request.form.get("credit_history", 0)),
+            property_area=request.form.get("property_area")
+        )
+        
+        pred_df = data.get_data_as_data_frame()
+        pipeline = PredictPipeline()
+        prediction = pipeline.predict(pred_df)
+        
+        result = prediction[0] if hasattr(prediction, "__len__") else prediction
+        return redirect(url_for("result", prediction=result))
+    
+    except Exception as e:
+        logger.exception("Prediction failed")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/result", methods=["GET"])
 def result():
-    label = session.pop("last_result", None)
-    if not label:
-        return redirect(url_for("home"))
-    return render_template("result.html", result=label)
+    prediction = request.args.get("prediction", "No prediction")
+    return render_template("result.html", prediction=prediction)
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok"}), 200
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    logger.info("Starting server on port %s", port)
     app.run(host="0.0.0.0", port=port, debug=True)
