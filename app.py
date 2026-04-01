@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
-from flask_cors import CORS
 import os
 import logging
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_cors import CORS
 
 from src.pipeline.prediction_pipeline import PredictPipeline, CustomData
 
@@ -23,23 +23,20 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Extract form data
+        # Extract form data and match CustomData parameter names
         data = CustomData(
-            loan_id=request.form.get("loan_id"),
-            gender=request.form.get("gender"),
-            married=request.form.get("married"),
-            dependents=request.form.get("dependents"),
-            education=request.form.get("education"),
-            self_employed=request.form.get("self_employed"),
-            applicantincome=float(request.form.get("applicantincome", 0)),
-            coapplicantincome=float(request.form.get("coapplicantincome", 0)),
-            loanamount=float(request.form.get("loanamount", 0)),
-            loan_amount_term=float(request.form.get("loan_amount_term", 0)),
-            credit_history=float(request.form.get("credit_history", 0)),
-            property_area=request.form.get("property_area")
+            Gender=request.form.get("Gender"),
+            Married=request.form.get("Married"),
+            Education=request.form.get("Education"),
+            Self_Employed=request.form.get("Self_Employed"),
+            ApplicantIncome=float(request.form.get("ApplicantIncome", 0)),
+            CoapplicantIncome=float(request.form.get("CoapplicantIncome", 0)),
+            LoanAmount=float(request.form.get("LoanAmount", 0)),
+            Loan_Amount_Term=float(request.form.get("Loan_Amount_Term", 0)),
+            Credit_History=float(request.form.get("Credit_History", 0))
         )
         
-        pred_df = data.get_data_as_data_frame()
+        pred_df = data.get_data_as_dataframe()
         pipeline = PredictPipeline()
         prediction = pipeline.predict(pred_df)
         
