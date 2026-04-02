@@ -1,213 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Result</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bank Loan Approval | Result</title>
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+  <style>
+    :root{
+      --bg:#081126;
+      --bg2:#0b1633;
+      --card:#1a2340;
+      --line:rgba(255,255,255,.08);
+      --text:#eef2ff;
+      --muted:#b6c2e2;
+      --accent1:#29d3ff;
+      --accent2:#5b6cff;
+      --ok:#35d07f;
+      --bad:#ff5f7a;
+    }
 
-        .result-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 60px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-            animation: slideUp 0.6s ease-out;
-        }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(41,211,255,.18), transparent 45%),
+        radial-gradient(800px 450px at 100% 0%, rgba(91,108,255,.18), transparent 40%),
+        linear-gradient(160deg, var(--bg), var(--bg2));
+    }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .panel{
+      width:100%;
+      max-width: 640px;
+      background: linear-gradient(180deg, rgba(28,39,73,.96), rgba(20,29,57,.96));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      padding: 34px 28px;
+      text-align:center;
+    }
 
-        .result-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: bounce 0.6s ease-out;
-        }
+    .icon{
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+    .title{
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
 
-        .result-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #333;
-        }
+    .desc{
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
 
-        .result-badge {
-            display: inline-block;
-            padding: 15px 40px;
-            border-radius: 15px;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+    .badge-result{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin: 10px 0 18px;
+    }
 
-        .approved {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 10px 40px rgba(79, 172, 254, 0.4);
-        }
+    .approved{
+      background: rgba(53,208,127,.14);
+      color: #81f0b3;
+      border: 1px solid rgba(53,208,127,.25);
+    }
 
-        .rejected {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 10px 40px rgba(245, 87, 108, 0.4);
-        }
+    .rejected{
+      background: rgba(255,95,122,.14);
+      color: #ff9fb0;
+      border: 1px solid rgba(255,95,122,.25);
+    }
 
-        .result-message {
-            font-size: 1.2rem;
-            margin: 20px 0;
-            color: #555;
-            line-height: 1.6;
-        }
+    .summary{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 18px;
+      color: var(--muted);
+      text-align:left;
+      margin-top: 18px;
+    }
 
-        .approved-msg {
-            color: #0d6efd;
-        }
+    .summary strong{ color: #fff; }
 
-        .rejected-msg {
-            color: #f5576c;
-        }
+    .btn-row{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 24px;
+    }
 
-        .divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #667eea, transparent);
-            margin: 30px 0;
-        }
+    .btn-custom{
+      border:none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 800;
+      text-decoration:none;
+      color:#fff;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      box-shadow: 0 10px 28px rgba(41,211,255,.22);
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
+    .btn-outline-custom{
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: #fff;
+    }
 
-        .btn-action {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-            color: white;
-        }
-
-        .btn-secondary-custom {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary-custom:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .success-animation {
-            animation: successPulse 0.6s ease-out;
-        }
-
-        @keyframes successPulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
+    .btn-custom:hover, .btn-outline-custom:hover{
+      color:#fff;
+      transform: translateY(-1px);
+    }
+  </style>
 </head>
 <body>
-    <div class="result-container">
-        {% if prediction == 'Y' or prediction == 1 or prediction == '1' %}
-            <div class="result-icon success-animation">✅</div>
-            <h1 class="result-title">Great News!</h1>
-            <div class="result-badge approved">LOAN APPROVED</div>
-            <p class="result-message approved-msg">
-                🎉 Congratulations! Your loan application is likely to be <strong>APPROVED</strong>.
-            </p>
-            <p style="color: #999; font-size: 0.9rem;">
-                Based on your financial profile and credit history, you meet the approval criteria.
-            </p>
-        {% else %}
-            <div class="result-icon" style="animation: none;">❌</div>
-            <h1 class="result-title">Application Status</h1>
-            <div class="result-badge rejected">LOAN REJECTED</div>
-            <p class="result-message rejected-msg">
-                Sorry! Your loan application is likely to be <strong>REJECTED</strong>.
-            </p>
-            <p style="color: #999; font-size: 0.9rem;">
-                We suggest improving your credit history or income before reapplying.
-            </p>
-        {% endif %}
+  <div class="panel">
+    {% if prediction == 1 or prediction == '1' %}
+      <div class="icon">✅</div>
+      <div class="title">Loan Approved</div>
+      <div class="badge-result approved">Approved</div>
+      <div class="desc">The model predicts a positive loan approval outcome.</div>
+    {% else %}
+      <div class="icon">❌</div>
+      <div class="title">Loan Rejected</div>
+      <div class="badge-result rejected">Rejected</div>
+      <div class="desc">The model predicts a negative loan approval outcome.</div>
+    {% endif %}
 
-        <div class="divider"></div>
-
-        <div class="action-buttons">
-            <a href="/home" class="btn-action btn-primary-custom">🔄 Try Again</a>
-            <a href="/" class="btn-action btn-secondary-custom">🏠 Back to Home</a>
-        </div>
+    <div class="summary">
+      <strong>Result:</strong> {{ prediction }}<br />
+      <strong>Note:</strong> This is a model prediction, not a final decision.
     </div>
+
+    <div class="btn-row">
+      <a href="/home" class="btn-custom">Try Again</a>
+      <a href="/" class="btn-custom btn-outline-custom">Home</a>
+    </div>
+  </div>
 </body>
 </html>
