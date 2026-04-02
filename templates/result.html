@@ -12,7 +12,7 @@
     :root{
       --bg:#081126;
       --bg2:#0b1633;
-      --card:#1a2340;
+      --card:#15203f;
       --line:rgba(255,255,255,.08);
       --text:#eef2ff;
       --muted:#b6c2e2;
@@ -40,72 +40,128 @@
 
     .panel{
       width:100%;
-      max-width: 640px;
-      background: linear-gradient(180deg, rgba(28,39,73,.96), rgba(20,29,57,.96));
+      max-width: 720px;
+      background: linear-gradient(180deg, rgba(24,35,68,.96), rgba(18,27,54,.96));
       border: 1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.35);
-      padding: 34px 28px;
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.45);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, rgba(41,211,255,.12), transparent 40%, rgba(91,108,255,.10));
+      pointer-events:none;
+    }
+
+    .header{
+      padding: 28px 28px 18px;
       text-align:center;
+      position:relative;
+      z-index:1;
     }
 
     .icon{
-      font-size: 3rem;
-      margin-bottom: 10px;
+      width:76px;
+      height:76px;
+      margin:0 auto 14px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 24px rgba(255,255,255,.04);
     }
 
     .title{
       font-size: 2rem;
       font-weight: 800;
-      margin-bottom: 8px;
+      margin:0 0 8px;
+      letter-spacing:.2px;
     }
 
     .desc{
       color: var(--muted);
-      margin-bottom: 20px;
+      margin:0;
+      font-size: 1rem;
+    }
+
+    .content{
+      padding: 0 28px 28px;
+      position:relative;
+      z-index:1;
+    }
+
+    .status{
+      display:flex;
+      justify-content:center;
+      margin: 14px 0 22px;
     }
 
     .badge-result{
       display:inline-flex;
       align-items:center;
-      gap:.5rem;
-      padding: 12px 18px;
-      border-radius: 14px;
+      gap:.55rem;
+      padding: 13px 22px;
+      border-radius: 999px;
       font-weight: 800;
-      font-size: 1.1rem;
-      margin: 10px 0 18px;
+      font-size: 1.05rem;
+      letter-spacing:.3px;
+      border: 1px solid transparent;
     }
 
     .approved{
-      background: rgba(53,208,127,.14);
-      color: #81f0b3;
-      border: 1px solid rgba(53,208,127,.25);
+      background: linear-gradient(90deg, rgba(53,208,127,.18), rgba(53,208,127,.10));
+      color: #89f3ba;
+      border-color: rgba(53,208,127,.28);
     }
 
     .rejected{
-      background: rgba(255,95,122,.14);
-      color: #ff9fb0;
-      border: 1px solid rgba(255,95,122,.25);
+      background: linear-gradient(90deg, rgba(255,95,122,.18), rgba(255,95,122,.10));
+      color: #ffb0be;
+      border-color: rgba(255,95,122,.28);
     }
 
     .summary{
       background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 18px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 18px;
+      padding: 18px 20px;
       color: var(--muted);
-      text-align:left;
-      margin-top: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
     }
 
-    .summary strong{ color: #fff; }
+    .summary-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .summary-row:last-child{ border-bottom:0; }
+
+    .summary-label{
+      color:#ffffff;
+      font-weight:700;
+    }
+
+    .summary-value{
+      text-align:right;
+      word-break:break-word;
+    }
 
     .btn-row{
       display:flex;
       gap:12px;
       justify-content:center;
       flex-wrap:wrap;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
     .btn-custom{
@@ -116,7 +172,8 @@
       text-decoration:none;
       color:#fff;
       background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      box-shadow: 0 10px 28px rgba(41,211,255,.22);
+      box-shadow: 0 12px 30px rgba(41,211,255,.22);
+      transition: transform .2s ease, filter .2s ease;
     }
 
     .btn-outline-custom{
@@ -127,32 +184,77 @@
 
     .btn-custom:hover, .btn-outline-custom:hover{
       color:#fff;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .note{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .92rem;
+      text-align:center;
+    }
+
+    @media (max-width: 576px){
+      .panel{ border-radius: 20px; }
+      .header, .content{ padding-left:18px; padding-right:18px; }
+      .title{ font-size: 1.55rem; }
+      .summary-row{ flex-direction:column; }
+      .summary-value{ text-align:left; }
     }
   </style>
 </head>
+
 <body>
   <div class="panel">
-    {% if prediction == 1 or prediction == '1' %}
-      <div class="icon">✅</div>
-      <div class="title">Loan Approved</div>
-      <div class="badge-result approved">Approved</div>
-      <div class="desc">The model predicts a positive loan approval outcome.</div>
-    {% else %}
-      <div class="icon">❌</div>
-      <div class="title">Loan Rejected</div>
-      <div class="badge-result rejected">Rejected</div>
-      <div class="desc">The model predicts a negative loan approval outcome.</div>
-    {% endif %}
-
-    <div class="summary">
-      <strong>Result:</strong> {{ prediction }}<br />
-      <strong>Note:</strong> This is a model prediction, not a final decision.
+    <div class="header">
+      {% if prediction == 1 or prediction == '1' %}
+        <div class="icon"><i class="bi bi-check2-circle text-success"></i></div>
+        <h1 class="title">Loan Approved</h1>
+        <p class="desc">The model predicts a positive loan approval outcome.</p>
+      {% else %}
+        <div class="icon"><i class="bi bi-x-circle text-danger"></i></div>
+        <h1 class="title">Loan Rejected</h1>
+        <p class="desc">The model predicts a negative loan approval outcome.</p>
+      {% endif %}
     </div>
 
-    <div class="btn-row">
-      <a href="/home" class="btn-custom">Try Again</a>
-      <a href="/" class="btn-custom btn-outline-custom">Home</a>
+    <div class="content">
+      <div class="status">
+        {% if prediction == 1 or prediction == '1' %}
+          <div class="badge-result approved"><i class="bi bi-shield-check"></i> Approved</div>
+        {% else %}
+          <div class="badge-result rejected"><i class="bi bi-shield-x"></i> Rejected</div>
+        {% endif %}
+      </div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <div class="summary-label">Prediction</div>
+          <div class="summary-value">{{ prediction }}</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Status</div>
+          <div class="summary-value">
+            {% if prediction == 1 or prediction == '1' %}
+              Approved
+            {% else %}
+              Rejected
+            {% endif %}
+          </div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Note</div>
+          <div class="summary-value">This is a model prediction, not a final decision.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <a href="/home" class="btn-custom">Try Again</a>
+        <a href="/" class="btn-custom btn-outline-custom">Home</a>
+      </div>
+
+      <div class="note">Bank Loan Approval Predictor</div>
     </div>
   </div>
 </body>
